@@ -27,12 +27,17 @@ main:
 
     mov r12, rax ; File descriptor
 
+    ; read this in a loop since read handles all of the things
+read_display_loop:
     ; reading the file (syscall)
     mov rax, 0
     mov rdi, r12
     mov rsi, buffer
-    mov rdx, 4096
+    mov rdx, 4096 
     syscall
+
+    cmp rax, 0
+    je exit ; means file has been read completely
 
     ; display the text (sycall)
     mov rax, 1
@@ -41,7 +46,8 @@ main:
     mov rdx, 4096 
     syscall
 
-    jmp exit
+    jmp read_display_loop
+
 
 show_usage:
     ; prints to the stdout wiht msg

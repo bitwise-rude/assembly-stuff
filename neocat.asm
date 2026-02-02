@@ -1,7 +1,6 @@
-; A clone of the cat tool in the unix system
+; A clone of the `cat` tool in the unix system
 
 format ELF64 executable
-entry main
 
 segment readable executable
 main:

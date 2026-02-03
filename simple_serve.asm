@@ -23,11 +23,23 @@ main:
 
     cmp rax, 0
     jl show_error_msg_socket 
-    mov r10, rax
+    mov rbx, rax
 
-    ; binding
+    ; seeting socket options, so that time_wait is not applied to us
+    mov rax, 0x36
+    mov rdi, rbx 
+    mov rsi, 1
+    mov rdx, 2   
+    mov r10, val_one 
+    mov r8, 4 
+    syscall
+
+    cmp rax, 0
+    jne show_error_msg_socket
+    
+     ; binding
     mov rax, 0x31
-    mov rdi, r10
+    mov rdi, rbx 
     mov rsi, sockaddr
     mov rdx, 16
     syscall
@@ -38,20 +50,20 @@ main:
 
     ; listen
     mov rax, 0x32
-    mov rdi, r10
+    mov rdi, rbx 
     mov rsi, 50 
     syscall  
 
     ; accept
     mov rax, 0x2b
-    mov rdi, r10
+    mov rdi, rbx 
     mov rsi, sockaddr2
     mov rdx, temp_addr
     syscall
 
     cmp rax, 0
     jl show_error_msg_socket
-    mov r9, rax
+    mov rcx, rax
 
     jmp exit
 
@@ -86,6 +98,7 @@ exit:
     syscall
 
 segment readable writable
+
 err_msg db "Please enter a text to serve", 10
 err_msg_len = $ - err_msg
 
@@ -107,13 +120,15 @@ temp_addr:
 
 sockaddr: 
     dw 2 ; AF_INET
-    dw 0x5c11 ; port number = 2
+    dw 0x901F; port number = 2
     dd 0 ; 0.0.0.0
     dq 0 ; padding purposes 
-
 
 sockaddr2: 
     dw 2 ; AF_INET
     dw 0x1F90; port number = 8080
     dd 0 ; 0.0.0.0
     dq 0 ; padding purposes 
+
+ val_one:
+    dw 1 ; used for time_wait: 

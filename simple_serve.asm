@@ -6,14 +6,6 @@ format ELF64 executable
 ; 2 -> rdx
 segment readable executable
 main:
-    mov rbx, rsp 
-    mov r8, [rbx] ; argc
-
-    cmp r8, 2
-    jl show_usage
-
-    mov rdi, [rbx+16] ; argv[1]
-
     ; creating socket
     mov rax, 0x29
     mov rdi, 2 ; AF_INET
@@ -77,14 +69,6 @@ main:
 
     jmp exit
 
-show_usage:
-    ; shows usages and quits
-    mov rax, 0x01
-    mov rdi, 0x01
-    mov rsi, msg
-    mov rdx, msg_len  
-    syscall
-    jmp exit 
 
 show_error:
     ; shows errors a quit
@@ -114,15 +98,6 @@ err_msg_len = $ - err_msg
 
 err_msg_socket db "Some Error in socket Creation", 10
 err_msg_socket_len = $ - err_msg_socket
-
-msg db 10, \
-    9, \
-    "-------Simple_Server-------", \ 
-    10,10,9, \
-    "Simple Webserver to serve a text",10,10, \ 
-    "Usage : simple_server <text>", 10 
-
-msg_len = $ - msg 
 
 
 temp_addr: 

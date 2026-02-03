@@ -64,6 +64,16 @@ main:
     cmp rax, 0
     jl show_error_msg_socket
     mov rcx, rax
+    
+    ; sending message
+    mov rax, 1
+    mov rdi, rcx
+    mov rsi, http_response
+    mov rdx, http_size
+    syscall
+
+    cmp rax, 0
+    jl show_error_msg_socket
 
     jmp exit
 
@@ -132,3 +142,12 @@ sockaddr2:
 
  val_one:
     dw 1 ; used for time_wait: 
+
+http_response:
+    db "HTTP/1.1 200 OK", 13, 10
+    db "Content-Length: 5",  13, 10
+    db "Content-Type: text/plain; charset=utf-8",13, 10
+    db 13, 10
+    db "Hello", 13, 10
+
+http_size = $ - http_response

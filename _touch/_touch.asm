@@ -7,28 +7,29 @@ main:
     cmp r10,2 
     jl print_usage
 
-    mov r11, [rsp+8]
+    lea r12, [rsp+8]
     mov r9,1
     _loop:
         cmp r9,r10
         jge exit
 
-        mov r8, [r11+8*r9]
-        call print
+        mov r8, [r12+8*r9]
+        call open
 
         inc r9
         jmp _loop
 
     jmp exit
 
-print:
-    mov rax,1
-    mov rdi,1
-    mov rsi,r8 
-    mov rdx,2
-    syscall
-    ret
 
+open:
+    ; open the file
+    mov rax, 2
+    mov rdi, r8
+    mov rsi, 192
+    mov rdx, 0644o 
+    syscall 
+    ret
 print_usage:
     mov rax, 1
     mov rdi, 1
